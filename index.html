@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#7750d9">
+  <meta name="description" content="把邓紫棋 I AM GLORIA 演唱会造型变成萌萌的小人，碰一碰，合成属于你的荣耀舞台。">
+  <title>合成小紫棋 · I AM GLORIA</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='20' fill='%237750d9'/%3E%3Cpath d='M32 12L37 26L52 32L37 38L32 52L27 38L12 32L27 26Z' fill='%23fff1c6'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="style.css">
+  <script defer src="vendor/matter.min.js"></script>
+  <script defer src="game.js"></script>
+</head>
+<body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="合成小紫棋首页">
+      <span class="brand-mark" aria-hidden="true">✦</span>
+      <span>GLORIA<span class="brand-sub">CHIBI MERGE</span></span>
+    </a>
+    <div class="header-center"><span class="live-dot"></span>I AM GLORIA · Q 版合成演唱会</div>
+    <div class="header-actions">
+      <button id="sound-btn" class="icon-button" aria-label="开启音效" title="开启音效" aria-pressed="false"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M11 5 6 9H3v6h3l5 4V5Z"/><path id="sound-path" d="m16 9 5 6m0-6-5 6"/></svg></button>
+      <button id="help-btn" class="icon-button" aria-label="玩法说明" title="玩法说明"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 4.3 1.7c-1.5.8-1.8 1.4-1.8 2.8"/><circle cx="12" cy="17" r=".6" fill="currentColor"/></svg></button>
+    </div>
+  </header>
+
+  <main class="game-layout">
+    <aside class="intro-column">
+      <div class="tour-label"><span>✧</span> THE LITTLE GLORIA TOUR</div>
+      <h1>合成<span>小紫棋<span class="title-star" aria-hidden="true">✦</span></span></h1>
+      <p class="intro-copy">让每一次相遇，<br>都变成闪闪发光的你。</p>
+      <section class="score-card" aria-label="游戏分数">
+        <div class="score-label">本场得分 <span>✧</span></div>
+        <div id="score" class="score-number">0</div>
+        <div class="best-score"><span>最高纪录</span><strong id="best">0</strong></div>
+      </section>
+      <div class="goal-card">
+        <div class="goal-art"><div class="goal-orbit"></div><img data-character="7" alt="灰烬婚纱 Q 版角色" draggable="false"><span class="goal-spark spark-one">✦</span><span class="goal-spark spark-two">✧</span></div>
+        <span class="goal-kicker">本场终极造型</span>
+        <h2>灰烬中的光</h2>
+        <p>合成灰烬婚纱，点亮荣耀时刻</p>
+      </div>
+      <div class="fan-note">为喜欢的舞台，留一份小小的可爱。<span>FAN-MADE · 非官方同人</span></div>
+    </aside>
+
+    <section class="play-column" aria-label="合成小紫棋游戏">
+      <div class="stage-toolbar">
+        <div class="next-character"><span>下一位</span><img id="next-img" alt="下一位角色" draggable="false"><strong id="next-name">紫色安可</strong></div>
+        <div class="stage-buttons">
+          <button id="pause-btn" class="icon-button" aria-label="暂停游戏" title="暂停游戏"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 5v14M16 5v14"/></svg></button>
+          <button id="restart-btn" class="icon-button" aria-label="重新开始" title="重新开始"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 10a8 8 0 1 1 1.2 7M4 4v6h6"/></svg></button>
+        </div>
+      </div>
+      <div id="stage" class="stage">
+        <div class="stage-lights" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i></div>
+        <canvas id="game-canvas" width="440" height="660" tabindex="0" role="application" aria-label="合成游戏：鼠标移动瞄准，点击投放。键盘左右键移动，空格投放，P 暂停。触屏拖动后松手投放。"></canvas>
+        <div id="loading" class="loading"><span class="loading-star">✦</span><p>小紫棋们正在候场…</p><button id="retry-assets" class="primary-button" hidden>重新加载</button></div>
+        <div id="empty-hint" class="empty-hint"><span>✧</span><strong>小紫棋，准备登场</strong><p>移动瞄准 · 点击投放</p><span class="hint-line"></span></div>
+        <div id="stage-message" class="stage-message" aria-live="polite"></div>
+        <div id="pause-overlay" class="stage-overlay" hidden><div class="overlay-symbol">Ⅱ</div><h2>中场休息</h2><p>小紫棋们在等你回来</p><button id="resume-btn" class="primary-button">继续演出</button></div>
+        <div id="over-overlay" class="stage-overlay" hidden><div class="overlay-symbol">✧</div><span class="goal-kicker">THANK YOU FOR COMING</span><h2>本场演出结束</h2><p>舞台已经挤满小紫棋啦</p><div class="final-score"><span>本场得分</span><strong id="final-score">0</strong></div><button id="again-btn" class="primary-button">再开一场</button></div>
+        <div id="win-overlay" class="stage-overlay" hidden><div class="win-art"><img data-character="7" alt="已合成灰烬婚纱"></div><span class="goal-kicker">GLORIA MOMENT</span><h2>你就是那束光</h2><p>恭喜合成终极造型 · 灰烬婚纱</p><button id="continue-btn" class="primary-button">继续闪闪发光</button></div>
+      </div>
+      <div class="play-instruction"><span class="instruction-icon">✧</span><span id="input-tip">移动瞄准，点击投放</span><span class="instruction-divider">·</span><span>同款碰撞即可合成</span></div>
+      <div class="mobile-score"><span>得分 <strong id="mobile-score">0</strong></span><span>纪录 <strong id="mobile-best">0</strong></span></div>
+    </section>
+
+    <aside class="collection-column">
+      <div class="collection-header"><div><span class="eyebrow">THE LOOKBOOK</span><h2>造型图鉴 <span id="collection-count">1 / 8</span></h2></div><span class="collection-star" aria-hidden="true">✧</span></div>
+      <p class="collection-copy">两只同款，解锁下一套舞台造型</p>
+      <div id="lookbook" class="lookbook" aria-label="8 个等级的造型图鉴"></div>
+      <div class="merge-note"><span>✦</span><div><strong>从小小的你，到闪耀的你</strong><p>造型越往后，角色就越大</p></div></div>
+      <button id="gallery-btn" class="gallery-button">查看完整角色素材 <span>↗</span></button>
+    </aside>
+  </main>
+
+  <footer class="page-footer"><span>MADE OF LITTLE MOMENTS & BIG LOVE</span><span>G.E.M. I AM GLORIA · 同人创作</span></footer>
+  <div id="announcer" class="visually-hidden" aria-live="polite"></div>
+
+  <dialog id="help-dialog" class="modal small-modal" aria-labelledby="help-title">
+    <button class="modal-close icon-button" aria-label="关闭">×</button>
+    <span class="eyebrow">HOW TO PLAY</span><h2 id="help-title">相遇，然后一起闪耀</h2>
+    <ol class="help-steps"><li><span>01</span><div><strong>选一个登场的位置</strong><p>电脑移动鼠标后点击。手机拖动后松手。</p></div></li><li><span>02</span><div><strong>让两只同款相遇</strong><p>相同造型碰到一起，会合成更大的下一套造型。</p></div></li><li><span>03</span><div><strong>合成灰烬婚纱</strong><p>从紫色安可开始，收集全部 8 套造型。角色堆过警戒线持续 2 秒，本场演出结束。</p></div></li></ol>
+    <p class="keyboard-note">键盘：← → 瞄准 · 空格 / Enter 投放 · P 暂停</p><button class="primary-button dialog-dismiss">准备登场</button>
+  </dialog>
+  <dialog id="restart-dialog" class="modal small-modal" aria-labelledby="restart-title"><span class="eyebrow">ONE MORE SHOW</span><h2 id="restart-title">重新开一场？</h2><p>本场得分会清零，最高纪录和已解锁造型会保留。</p><div class="dialog-actions"><button class="secondary-button dialog-dismiss">继续这一场</button><button id="confirm-restart" class="primary-button">重新开始</button></div></dialog>
+  <dialog id="gallery-dialog" class="modal gallery-modal" aria-labelledby="gallery-title"><button class="modal-close icon-button" aria-label="关闭">×</button><span class="eyebrow">I AM GLORIA · CHARACTER COLLECTION</span><h2 id="gallery-title">八套造型，八种可爱</h2><p class="gallery-intro">参考巡演 1.0 / 2.0 造型创作 · 透明底 Q 版角色</p><div id="gallery-grid" class="gallery-grid"></div><p class="source-note">造型参考：<a href="https://www.elle.com.hk/fashion/gem-i-am-gloria-concert-looks" target="_blank" rel="noreferrer">ELLE 香港巡演穿搭整理</a> · <a href="https://ent.sina.cn/2023-12-12/detail-imzxucmw0014537.d.html?vt=4" target="_blank" rel="noreferrer">广州首站报道</a> · <a href="https://www.thepaper.cn/newsDetail_forward_28856525" target="_blank" rel="noreferrer">迷彩造型参考</a></p></dialog>
+</body>
+</html>

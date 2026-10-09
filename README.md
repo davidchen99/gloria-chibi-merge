@@ -1,0 +1,13 @@
+# 合成小紫棋 · I AM GLORIA
+
+邓紫棋演唱会造型的 Q 版下落合成小游戏。纯静态网页，不需要 ChatGPT、GitHub 账号或游戏服务器登录。
+
+电脑移动鼠标后点击投放；手机拖动瞄准，松手投放。两个同款造型碰撞合成下一套，终极造型为灰烬婚纱。
+
+8 张 PNG 角色保留真实透明背景。最高纪录与图鉴在浏览器本地保存。音效为程序生成，可通过右上角开关开启。
+
+非官方同人创作，造型参考 I AM GLORIA 巡演 1.0 / 2.0。
+
+物理引擎使用 Matter.js 0.20.0，授权说明见 `vendor/MATTER-LICENSE.txt`。
+
+这是独立网站发布目录；`index.html`、`style.css`、`game.js`、`assets/characters/` 和 `vendor/` 构成完整游戏。
