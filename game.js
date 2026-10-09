@@ -13,6 +13,7 @@
   const W=440, H=660, LEFT=12, RIGHT=428, FLOOR=632, LINE=126, STEP=1000/60;
   const $=id=>document.getElementById(id);
   const canvas=$('game-canvas'), ctx=canvas.getContext('2d');
+  let canvasPixelRatio=0;
   const assets=window.GLORIA_ASSETS||{};
   const images=LEVELS.map(()=>new Image());
   const reduced=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -32,6 +33,25 @@
   let soundOn=Boolean(store.read('sound',false)), audio;
   const modalPauseReasons=new Set();
   const soundNotes=[392,440,494,523.25,587.33,659.25,783.99,1046.5];
+
+  function screenPixelRatio(){return Math.min(4,Math.max(1,window.devicePixelRatio||1));}
+  function syncCanvasResolution(){
+    const rect=canvas.getBoundingClientRect();
+    if(!rect.width||!rect.height)return;
+    const ratio=screenPixelRatio();
+    const width=Math.round(rect.width*ratio),height=Math.round(rect.height*ratio);
+    if(canvas.width!==width||canvas.height!==height){
+      canvas.width=width;canvas.height=height;
+    }
+    // Physics and input stay in the original 440×660 world; pixels match the screen.
+    ctx.setTransform(canvas.width/W,0,0,canvas.height/H,0,0);
+    ctx.imageSmoothingEnabled=true;
+    ctx.imageSmoothingQuality='high';
+    canvasPixelRatio=ratio;
+  }
+  syncCanvasResolution();
+  if(typeof ResizeObserver!=='undefined')new ResizeObserver(syncCanvasResolution).observe(canvas);
+  addEventListener('resize',syncCanvasResolution,{passive:true});
 
   function source(i){return assets[LEVELS[i].id]||'assets/characters/'+LEVELS[i].id+'.png';}
   function announce(text){$('announcer').textContent=text;}
@@ -220,6 +240,8 @@
     ctx.drawImage(img,-width/2,-height/2,width,height);ctx.restore();
   }
   function render(time){
+    // Browser zoom or a different monitor can change density without a CSS resize.
+    if(canvasPixelRatio!==screenPixelRatio())syncCanvasResolution();
     ctx.clearRect(0,0,W,H);
     // Small concert lights and a grounded floor, behind all gameplay sprites.
     const glow=ctx.createRadialGradient(W/2,602,12,W/2,602,230);
